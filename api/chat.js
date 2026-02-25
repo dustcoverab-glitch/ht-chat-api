@@ -16,6 +16,33 @@ const ALLOWED_ORIGINS = new Set([
   "https://htytrengoring.se",
 ]);
 
+/* ======== HEMSIDA LÄNK-KATALOG ======== */
+
+const SITE_LINKS = [
+  {
+    key: "stentvatt",
+    label: "Om stentvätt",
+    url: "https://www.htytrengoring.se/stentvatt"
+  },
+  {
+    key: "asfalt",
+    label: "Asfaltsförsegling",
+    url: "https://www.htytrengoring.se/asfalt"
+  },
+  {
+    key: "kontakt",
+    label: "Kontakt",
+    url: "https://www.htytrengoring.se/kontakt"
+  },
+  {
+    key: "bokning",
+    label: "Boka provtvätt",
+    url: "https://www.bokadirekt.se/places/ht-ytrengoring-ab-58864"
+  }
+];
+
+/* ======== CORS ======== */
+
 function setCors(req, res) {
   const origin = req.headers.origin;
   if (origin && (ALLOWED_ORIGINS.has(origin) || origin.endsWith(".squarespace.com"))) {
@@ -33,6 +60,8 @@ function hashIp(ip) {
   return crypto.createHash("sha256").update(ip).digest("hex");
 }
 
+/* ======== MAIN HANDLER ======== */
+
 export default async function handler(req, res) {
   setCors(req, res);
 
@@ -40,12 +69,11 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   try {
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: "Missing OPENAI_API_KEY in Vercel env vars" });
-    }
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
-      return res.status(500).json({ error: "Missing SUPABASE_URL or SUPABASE_SERVICE_KEY" });
-    }
+    if (!process.env.OPENAI_API_KEY)
+      return res.status(500).json({ error: "Missing OPENAI_API_KEY" });
+
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY)
+      return res.status(500).json({ error: "Missing Supabase env vars" });
 
     const { text, history, sessionId, pageUrl, userAgent } = req.body || {};
     const userText = String(text || "").trim();
@@ -59,7 +87,8 @@ export default async function handler(req, res) {
       req.socket?.remoteAddress ||
       null;
 
-    // 1) upsert session
+    /* ======== LOG SESSION ======== */
+
     await supabase.from("chat_sessions").upsert({
       id: sid,
       ip_hash: hashIp(ip),
@@ -67,29 +96,40 @@ export default async function handler(req, res) {
       page_url: pageUrl || null
     });
 
-    // 2) log user message
     await supabase.from("chat_messages").insert({
       session_id: sid,
       role: "user",
       content: userText
     });
 
-    const systemPrompt = `
-Du är HT Ytrengörings chattassistent.
-Svara på svenska, kort, professionellt och serviceinriktat, i vi-form.
+    /* ======== SYSTEM PROMPT ======== */
 
-Fakta:
-- Primär tjänst: stentvätt.
-- I stentvätt ingår impregnering, algbehandling och fogsand (enligt upplägg).
-- Vi erbjuder även asfaltsförsegling.
-- Verksamma i Östergötland med säte i Linköping.
-- Inga fasta priser. Pris beror på yta, utformning, stentyp, påväxt m.m.
-- Vi erbjuder gratis offert samt gratis provtvätt och uppmätning.
+    const systemPrompt = `
+Du är HT Ytrengörings professionella chattassistent.
 
 Regler:
-- Hitta aldrig på fakta.
-- Ställ max 1 följdfråga när det behövs.
-- När kunden verkar intresserad: föreslå bokning av gratis provtvätt/uppmätning eller kontakt.
+- Svara på svenska.
+- Var hjälpsam och saklig.
+- Var inte aggressivt säljande.
+- Besvara rena informationsfrågor utan att pusha.
+
+När kunden visar tydlig köpintention (offert, boka, vill köra, intresserad):
+- Bli mer säljande.
+- Föreslå gratis provtvätt/uppmätning.
+- Lägg längst ner i svaret exakt denna rad:
+[TRIGGER_LEAD_FORM]
+
+Om kunden ber om info om tjänster, kan du hänvisa till hemsidan.
+Om du hänvisar till en specifik sida, skriv längst ner:
+[SHOW_LINK:stentvatt]
+eller
+[SHOW_LINK:asfalt]
+eller
+[SHOW_LINK:kontakt]
+eller
+[SHOW_LINK:bokning]
+
+Skriv aldrig förklaringar om taggarna.
 `;
 
     const messages = [
@@ -101,27 +141,58 @@ Regler:
     const response = await openai.responses.create({
       model: "gpt-4.1-mini",
       input: messages,
-      max_output_tokens: 250
+      max_output_tokens: 300
     });
 
     let reply = "";
     const out = response.output || [];
+
     for (const item of out) {
       for (const c of (item.content || [])) {
-        if (c.type === "output_text" && typeof c.text === "string") reply += c.text;
+        if (c.type === "output_text" && typeof c.text === "string")
+          reply += c.text;
       }
     }
 
-    reply = reply.trim() || "Vi hjälper gärna. Kan du säga ort och ungefärlig yta?";
+    reply = reply.trim() || "Vi hjälper gärna. Kan du berätta lite mer?";
 
-    // 3) log assistant message
+    /* ======== TAG DETECTION ======== */
+
+    let triggerLeadForm = false;
+    let buttons = [];
+
+    if (reply.includes("[TRIGGER_LEAD_FORM]")) {
+      triggerLeadForm = true;
+      reply = reply.replace("[TRIGGER_LEAD_FORM]", "").trim();
+    }
+
+    const linkMatch = reply.match(/\[SHOW_LINK:(.*?)\]/);
+    if (linkMatch) {
+      const key = linkMatch[1];
+      const linkObj = SITE_LINKS.find(l => l.key === key);
+      if (linkObj) {
+        buttons.push({
+          label: linkObj.label,
+          url: linkObj.url
+        });
+      }
+      reply = reply.replace(/\[SHOW_LINK:(.*?)\]/, "").trim();
+    }
+
+    /* ======== LOG BOT MESSAGE ======== */
+
     await supabase.from("chat_messages").insert({
       session_id: sid,
       role: "assistant",
       content: reply
     });
 
-    return res.status(200).json({ reply });
+    return res.status(200).json({
+      reply,
+      triggerLeadForm,
+      buttons
+    });
+
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Server error" });
