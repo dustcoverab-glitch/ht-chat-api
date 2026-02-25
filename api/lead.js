@@ -5,6 +5,27 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
+// Samma origins som du kör i chat.js
+const ALLOWED_ORIGINS = new Set([
+  "https://www.htytrengoring.se",
+  "https://htytrengoring.se",
+]);
+
+function setCors(req, res) {
+  const origin = req.headers.origin;
+
+  if (origin && (ALLOWED_ORIGINS.has(origin) || origin.endsWith(".squarespace.com"))) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  } else {
+    // om du vill vara strikt senare: sätt till din domän istället för *
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
+
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
 function esc(s) {
   return String(s ?? "")
     .replaceAll("&", "&amp;")
@@ -27,7 +48,6 @@ async function sendLeadEmail(data) {
     <p><strong>Meddelande:</strong><br>${esc(data.message || "-").replaceAll("\n", "<br>")}</p>
     <hr>
     <p><strong>Session:</strong> ${esc(data.sessionId)}</p>
-    <p style="color:#555;font-size:12px;">Skickat från HT:s chattbot</p>
   `;
 
   const response = await fetch("https://api.resend.com/emails", {
@@ -53,6 +73,8 @@ async function sendLeadEmail(data) {
 }
 
 export default async function handler(req, res) {
+  setCors(req, res);
+
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
@@ -79,7 +101,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing required fields (sessionId, phone)" });
     }
 
-    // 1) Save lead
     const { data: inserted, error } = await supabase
       .from("leads")
       .insert({
@@ -101,7 +122,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Database error" });
     }
 
-    // 2) Send email
     try {
       await sendLeadEmail({
         sessionId: sid,
@@ -114,14 +134,12 @@ export default async function handler(req, res) {
         message
       });
 
-      // Mark notified
       await supabase
         .from("leads")
         .update({ notified_at: new Date().toISOString() })
         .eq("id", inserted.id);
 
     } catch (mailErr) {
-      // Email failed but lead saved, still return success
       console.error(mailErr);
       return res.status(200).json({ success: true, warned: "Email failed, lead saved" });
     }
