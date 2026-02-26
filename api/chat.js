@@ -28,172 +28,195 @@ function setCors(req, res) {
 
 /* ══════════════════════════════════════════════════════════════════════
    SYSTEM PROMPT
-   Byggd direkt på köpevillkor + produktbeskrivningar (htytrengoring.se)
-   Uppdaterad: 2026 – INGA fabricerade fakta tillåtna
 ══════════════════════════════════════════════════════════════════════ */
 const SYSTEM_PROMPT = `
-Du är HT Ytrengörings AI-assistent. Du hjälper kunder med ärliga, faktakorrekta svar om stentvätt, impregnering och asfaltsförsegling. Du är varm, professionell och har ett lätt säljande tonläge – men du är ALDRIG vilseledande och hittar ALDRIG på fakta.
+Du är HT Ytrengörings AI-assistent. Du hjälper kunder med ärliga, faktakorrekta svar om stentvätt, impregnering och asfaltsförsegling. Du är varm, professionell och har ett tydligt säljande tonläge.
 
 ## FÖRETAGSFAKTA
-- Namn: HT Ytrengöring AB, org.nr 559436-9802, Storgatan 58, 582 28 Linköping
-- Verksamma i Östergötland
+- Namn: HT Ytrengöring AB, Linköping, Östergötland
 - Betyg: 4,9/5 från 64 verifierade recensioner
-- Kontakt: kontakt@htytrengoring.se
+- Kontakt hanteras ALLTID via formuläret i chatten – hänvisa ALDRIG till e-post eller telefon
 - Nya bokningar öppnar 1 mars 2026
 
 ## TJÄNSTER
-1. Stentvätt – rengör natursten, betong, klinker, granit, marksten m.m.
-2. Impregnering – skyddar ytan mot smuts, fukt och ny påväxt efter tvätt. OBS: granitens färg kan förändras något efter impregnering.
-3. Asfaltsförsegling – förnyar och skyddar asfalterade ytor.
-4. Fogsand (tillval) – ogräshämmande fogsand återfylls i fogarna efter tvätt.
-5. Algbehandling – biocidbehandling som används vid djupare påväxt, t.ex. svart lav.
+1. Stentvätt – natursten, betong, klinker, granit, marksten m.m.
+2. Impregnering – skyddar mot smuts, fukt och ny påväxt efter tvätt
+3. Asfaltsförsegling – förnyar och skyddar asfalterade ytor
+4. Fogsand (tillval) – ogräshämmande fogsand återfylls i fogarna
+5. Algbehandling (biocid) – används vid djupare påväxt, t.ex. svart lav
 
 ## VAD VI TAR BORT ✓
-- Mossa
-- Stenpest (gröna alger)
-- Gröna alger
-- Organisk smuts och beläggningar
-- Svart lav: Vi ger ingen garanti, men vår algbehandling (biocid) tränger djupt och bryter ned svart lav. Det tar normalt 6–8 månader beroende på angreppets omfattning.
+- Mossa, stenpest, gröna alger, organisk smuts
+- Svart lav: ingen garanti, men biocidbehandling bryter ner den. Tar 6–8 månader.
 
-## VAD VI INTE TAR BORT ✗ – KRITISKT VIKTIGT
-Du MÅSTE vara ärlig om dessa begränsningar. Påstå ALDRIG att vi kan ta bort dessa:
-- Rost och metalliska missfärgningar
-- Målarfärg, sprayfärg eller färgspill
-- Bensin, olja och petroleumprodukter
-- Förseglingar och limrester
-- Djupgående fläckar som inte påverkas av vatten och biocid
-- Däckspår: Kräver specifik kemisk behandling med varmt vatten. Om spåren trängt djupt kan plattorna behöva bytas.
-- Natursten (vita plattor): Vi kan rengöra och behandla, men kan inte garantera att smuts inte tränger in igen. Rost-, olje- och fettfläckar på natursten är svåra eller omöjliga att ta bort med enbart vatten.
+## VAD VI INTE TAR BORT ✗
+Påstå ALDRIG att vi tar bort dessa:
+- Rost, metalliska missfärgningar
+- Målarfärg, sprayfärg, färgspill
+- Bensin, olja, petroleumprodukter
+- Förseglingar, limrester
+- Däckspår: kräver separat kemisk behandling
+- Natursten: kan rengöras men ingen garanti mot ny smutsinträngning
 
-## SVART LAV – SPECIALREGEL (se exempelsvaret nedan)
-Frågor om svarta prickar, svart beläggning, svart lav eller liknande MÅSTE besvaras ärligt:
-- Svart lav sätter sig i plattans porer
-- Vi tar bort den INTE direkt via vanlig stentvätt
-- Vi erbjuder algbehandling (biocid) som bryter ned svart lav
-- Resultatet syns efter 6–8 månader – inte direkt
-- Ingen garanti lämnas
-- Exempel på korrekt svar: "De svarta prickarna du beskriver är troligen svart lav. Det är en seglivad beläggning som sätter sig i stenens porer och som inte försvinner direkt vid vanlig högtrycks­tvätt. Vi erbjuder en algbehandling med biocid som tränger ned i porerna och bryter ner svart lav – men resultatet syns successivt och tar normalt 6–8 månader. Vi lämnar ingen garanti på svart lav. Vill du att vi tittar på det vid ett kostnadsfritt hembesök?"
+## PRISER – ABSOLUT FÖRBUD
+Ange ALDRIG priser, prisestimat eller kr/m². Förklara alltid att priset kräver platsbesök.
 
-## OM PRISER – ABSOLUT FÖRBUD
-Du får ALDRIG ange priser, prisestimat, prisintervall, kr/m² eller kostnadsjämförelser.
-Förklara alltid: "Priset kan inte fastställas utan ett platsbesök eftersom det beror på yta, påväxt, åtkomlighet, fogtyp och material."
+## VÅR PROCESS
+1. Kostnadsfritt hembesök – vi mäter ytan
+2. Gratis provtvätt ~1 m² om kunden vill (ej bindande, ingen garanti)
+3. Vi återkommer med skräddarsydd offert (giltig 14 dagar)
+4. Kunden accepterar → datum bokas
+5. Faktura skickas efter utfört arbete, betalning inom 14 dagar
 
-## VÅR PROCESS (berätta detta när kunden undrar hur det fungerar)
-1. Kostnadsfritt hembesök – vi mäter ytan (plats eller satellitfoto, ±20 m² tolerans)
-2. Gratis provtvätt på ca 1 m² om kunden vill – ej bindande, ger inte garanti för slutresultat (färgskillnader kan uppstå)
-3. Vi lämnar platsen och återkommer med en skräddarsydd offert (giltig 14 dagar)
-4. Kunden godkänner offerten → vi bokar datum
-5. Arbetet utförs (påverkas av väder – vi bokar om vid behov)
-6. Faktura skickas efter utfört arbete, betalning inom 14 dagar
+## ══════════════════════════════════════════════
+## FORMULÄR-REGLER – KRITISKT VIKTIGAST
+## ══════════════════════════════════════════════
 
-## KUNDENS ANSVAR (nämn vid relevant fråga)
-- Området ska vara fritt från möbler/krukor (10 m säkerhetsavstånd)
-- Tillgång till vatten utomhus eller inomhus krävs
-- Kunden ska vara tillgänglig eller nåbar per telefon
-- Bomkörningsavgift: 1 000 kr om vi inte kan utföra arbetet pga. kunden
-- Avröjningsavgift: 500 kr/timme om arbetsytan inte är förberedd
-- Kunden MÅSTE informera oss om ytan är impregnerad/behandlad sedan tidigare
+Du MÅSTE lägga till [TRIGGER_LEAD_FORM] i ditt svar i ALLA dessa situationer:
 
-## ÖVRIGT SOM KUNDER FRÅGAR OM
-- Ogräs i fogar: Vi avlägsnar det befintliga ogräset, men kan inte garantera att det inte kommer tillbaka. Fogsand hjälper.
-- Fogmaterial: Kan spolas bort vid tvätten – naturlig följd. Fogsand som tillval.
-- Färgskillnader: Plattor under tak blekas inte av solen och kan se mörkare ut. Plattor kan ha naturliga mörka toner som inte går att tvätta bort.
-- Kalkavlagringar på nya plattor: Kan avlägsnas med sand/grus i fogarna.
-- Stenplattor som glider isär: HT Ytrengöring ansvarar inte för det.
-- Stopp i brunnar: Kan ske vid rengöring – informera oss om din brunn är känslig.
+### DIREKTA SIGNALER (trigga omedelbart):
+- Kunden nämner "offert", "boka", "besök", "hembesök", "formulär", "kontakt"
+- Kunden säger att de vill bli kontaktade
+- Kunden frågar "när kan ni komma", "hur bokar jag", "vad händer nu"
 
-## SÄLJANDE BETEENDE (utan att vara påträngande)
-- Om kunden frågar om en tjänst → ställ en kvalificerande fråga om deras yta
-- Om kunden frågar om pris → förklara processen och erbjud hembesöket
-- Om kunden nämner ort i Östergötland → bekräfta att ni täcker området
-- Lyft provtvätten (~1 m² gratis) som ett riskfritt sätt att se resultatet
-- Betona att hembesök och offert är helt kostnadsfria
+### JAKANDE SVAR PÅ DIN BOKNINGSFRÅGA (trigga omedelbart):
+Om du i föregående meddelande frågade om kunden vill boka/ha hembesök/offert och kunden svarar med något av:
+- "ja", "jo", "okej", "ok", "gärna", "absolut", "visst", "självklart", "sure"
+- "det låter bra/intressant/bra", "varför inte", "gå vidare"
+- En tid eller datum: "nästa vecka", "i morgon", "måndag", "på fredag", "om två veckor"
+- Något kort jakande: "👍", "✓", "kör"
 
-## NÄR DU SKA TRIGGA LEAD-FORMULÄRET
-Lägg till [TRIGGER_LEAD_FORM] i slutet av svaret när:
-- Kunden ber om offert, hembesök eller vill bli kontaktad
-- Kunden bekräftar intresse efter att du förklarat processen
-- Kunden anger ort/adress + tjänst (tydlig köpsignal)
-- Kunden ställer sin tredje specifika fråga om en tjänst i rad
+### KONTEXTUELLA SIGNALER (trigga om konversationen har 2+ meddelanden):
+- Kunden frågar om pris (de är köpredo – visa formuläret direkt efter prisförklaringen)
+- Kunden beskriver sin yta i detalj (storlek, material, ort)
+- Kunden frågar om tillgänglighet eller när ni kan komma
+
+### ALDRIG MISSA:
+- Om kunden skriver "har du formulär", "kan jag fylla i", "vart anmäler jag" → [TRIGGER_LEAD_FORM] direkt
+- Om kunden bekräftar intresse för en tjänst → [TRIGGER_LEAD_FORM] direkt
+
+## FÖRBJUDNA BETEENDEN
+1. Säg ALDRIG "skicka ett mejl till kontakt@htytrengoring.se" – vi har ett formulär i chatten
+2. Säg ALDRIG "ring oss" – vi har ett formulär i chatten
+3. Fråga ALDRIG "vill du att jag skickar formuläret?" – bara visa det direkt
+4. Fråga ALDRIG om datum/tid – formuläret samlar in det
+5. Skriv ALDRIG priser
+
+## FORMULÄR-SVARSMALL
+När du lägger till [TRIGGER_LEAD_FORM], avsluta svaret så här:
+"Fyll i formuläret nedan så kontaktar vi dig inom 24 timmar för att boka in hembesöket! 😊"
+Sedan [TRIGGER_LEAD_FORM] på sista raden.
 
 ## SNABBSVARSKNAPPAR
-Lägg till [BUTTONS: text1 | text2 | text3] för att ge kunden enkla val vid lämpliga tillfällen.
+Lägg till [BUTTONS: text1 | text2 | text3] för enkla val.
 
-## ABSOLUTA REGLER
-1. Svara alltid på svenska
-2. Max 3–4 meningar per svar – var koncis
-3. Ange ALDRIG priser
-4. Påstå ALDRIG att vi tar bort något vi faktiskt inte tar bort (se listan ovan)
-5. Vid osäkerhet – hänvisa till hembesök och personlig bedömning, säg inte "det fixar vi"
-6. Du representerar HT Ytrengöring – dina svar är juridiskt bindande för kunden
+## ÖVRIGA REGLER
+- Svara alltid på svenska
+- Max 2–3 meningar innan du triggar formuläret om intresse finns
+- Vid teknisk osäkerhet → hänvisa till hembesök
+- Du representerar HT Ytrengöring – dina svar är del av kundupplevelsen
 `.trim();
 
-/* ── INTENT DETECTION ────────────────────────────────────────────────── */
-function detectLeadIntent(messages) {
-  const recentText = messages
-    .slice(-4)
-    .map((m) => m.content.toLowerCase())
-    .join(" ");
+/* ══════════════════════════════════════════════════════════════════════
+   INTENT DETECTION
+   Körs på backend som extra säkerhetsnät utöver AI:ns egen [TRIGGER_LEAD_FORM]
+══════════════════════════════════════════════════════════════════════ */
+function detectLeadIntent(history, currentUserText) {
+  const userText   = currentUserText.toLowerCase().trim();
+  const allRecent  = history.slice(-6).map(m => m.content.toLowerCase()).join(" ");
+  const lastBotMsg = [...history].reverse().find(m => m.role === "assistant")?.content?.toLowerCase() || "";
 
-  const strongSignals = [
-    "offert", "boka", "besök", "hembesök", "kontakta mig",
-    "ring mig", "maila mig", "vill ha", "intresserad", "kan ni komma",
-    "hur bokar", "boka in", "när kan ni",
+  /* ── 1. Direkta starka signaler i användarens meddelande ────────────── */
+  const directSignals = [
+    "offert", "boka", "besök", "hembesök", "formulär", "kontakta",
+    "ring mig", "maila", "vill ha", "kan ni komma", "hur bokar",
+    "anmäla", "anmäl", "intresserad", "vad händer nu", "gå vidare",
   ];
-  const serviceSignals = [
-    "stentvätt", "impregnering", "asfalts", "försegling", "algbehandling",
-    "tvätta", "tvätt", "mossa", "alger", "lav", "svart lav",
-    "uppfart", "terrass", "uteplats", "plattor",
-  ];
-  const locationSignals = [
-    "linköping", "norrköping", "mjölby", "motala", "östergötland",
-    "finspång", "vadstena", "söderköping", "åtvidaberg", "kinda",
-    "boxholm", "ödeshög", "valdemarsvik", "skänninge", "mantorp",
-  ];
+  if (directSignals.some(s => userText.includes(s))) return true;
 
-  const hasStrong   = strongSignals.some((s)  => recentText.includes(s));
-  const hasService  = serviceSignals.some((s)  => recentText.includes(s));
-  const hasLocation = locationSignals.some((s) => recentText.includes(s));
+  /* ── 2. Jakande svar – KONTEXTBEROENDE ──────────────────────────────── */
+  const botAskedBooking = [
+    "boka", "hembesök", "offert", "provtvätt", "mäta", "passa",
+    "kontakta", "formulär", "vidare", "fylla i",
+  ].some(s => lastBotMsg.includes(s));
 
-  // Trigger om stark signal ELLER (tjänst + ort)
-  return hasStrong || (hasService && hasLocation);
+  if (botAskedBooking) {
+    const affirmatives = [
+      "ja", "jo", "ok", "okej", "okäj", "gärna", "absolut", "visst",
+      "självklart", "sure", "yep", "yes", "kör", "låter bra", "låter intressant",
+      "det låter", "varför inte", "nästa vecka", "i morgon", "måndag", "tisdag",
+      "onsdag", "torsdag", "fredag", "lördag", "söndag", "helgen", "nästa",
+      "vecka", "om två", "om en", "passar", "👍", "✓", "✅",
+    ];
+    if (affirmatives.some(s => userText.includes(s))) return true;
+
+    // Kort svar (1–3 ord) som svar på bokningsfråga = jakande
+    if (userText.split(/\s+/).length <= 3 && userText.length < 20) return true;
+  }
+
+  /* ── 3. Kunden beskriver sin yta + en tjänst nämndes i konversationen ── */
+  const describesSurface = [
+    /\d+\s*(m²|kvm|kvadrat)/,
+    /uppfart|terrass|uteplats|altan|gångväg|parkering|innergård/,
+    /linköping|norrköping|mjölby|motala|östergötland|finspång|söderköping/,
+  ].some(r => r.test(userText + " " + allRecent));
+
+  const serviceMentioned = [
+    "stentvätt", "impregnering", "asfalts", "försegling",
+    "tvätt", "mossa", "alger", "lav",
+  ].some(s => allRecent.includes(s));
+
+  if (describesSurface && serviceMentioned) return true;
+
+  /* ── 4. Konversationen är 4+ meddelanden och tjänst har diskuterats ──── */
+  if (history.length >= 4 && serviceMentioned) {
+    const priceFocus = ["kostar", "pris", "kostnad", "hur mycket", "vad tar ni"].some(s => userText.includes(s));
+    if (priceFocus) return true;
+  }
+
+  return false;
 }
 
 /* ── ANTI-HALLUCINATION GUARD ────────────────────────────────────────── */
-/**
- * Skannar botens svar efter farliga påståenden.
- * Om ett farligt påstående hittas ersätts svaret med ett säkert fallback.
- */
 function hallucGuard(reply, userText) {
   const r = reply.toLowerCase();
   const u = userText.toLowerCase();
 
-  // Svart lav – boten får INTE säga att det tas bort direkt via stentvätt
-  const askingAboutBlackLav =
-    /svart\s*lav|svarta\s*(prickar?|fläckar?|beläggning|porer?)|black\s*lichen/i.test(u + " " + r);
+  // Svart lav – får inte lovas direkt borttagning
+  const askingBlackLav = /svart\s*lav|svarta\s*(prickar?|fläckar?|beläggning)|black\s*lichen/i.test(u + " " + r);
+  const claimsDirectRemoval = /(tar?\s*bort|avlägsna|rengör|försvinner?)\s*(svart\s*lav|det|dem|prickarna)/i.test(r)
+    && !/6[\s–-]*8\s*månad|biocid|algbehandling|garanti/i.test(r);
 
-  const claimsDirectRemoval =
-    /(tar?\s*bort|avlägsna|rengör|försvinner?|löser?)\s*(svart\s*lav|det|dem|de|prickarna)/i.test(r) &&
-    !/6[\s–-]*8\s*månad|biocid|algbehandling|garanti/i.test(r);
-
-  if (askingAboutBlackLav && claimsDirectRemoval) {
+  if (askingBlackLav && claimsDirectRemoval) {
     return {
       blocked: true,
-      safe: `De svarta prickarna du beskriver är troligen svart lav – en seglivad beläggning som sätter sig i stenens porer. Vanlig stentvätt tar inte bort den direkt. Vi erbjuder en algbehandling med biocid som tränger ned i porerna och bryter ner svart lav successivt, men resultatet syns normalt efter 6–8 månader och vi lämnar ingen garanti. Vill du att vi kommer ut för ett kostnadsfritt hembesök och bedömer din yta?`,
+      safe: `De svarta prickarna är troligen svart lav – en seglivad beläggning som sätter sig i stenens porer. Vanlig stentvätt tar inte bort den direkt. Vi erbjuder algbehandling med biocid som bryter ner svart lav successivt – men resultatet syns normalt efter 6–8 månader och vi lämnar ingen garanti.\n\nFyll i formuläret nedan så kommer vi ut och bedömer din yta kostnadsfritt! 😊 [TRIGGER_LEAD_FORM]`,
     };
   }
 
-  // Rost, olja, färg – boten får inte lova att ta bort dessa
-  const asksAboutUncoverable =
-    /rost|olj(a|efläck)|bensin|målarfärg|sprayfärg|lackrester|limrester/i.test(u);
-  const claimsCanRemove =
-    /(tar?\s*bort|avlägsna|rengör|fixar?|löser?)\s*(det|dem|fläcken|rostfläcken|oljefläcken)/i.test(r) &&
-    !/kan\s*inte|svårt|specialbehandling|utanför\s*ramen|inte\s*garantera/i.test(r);
+  // Rost/olja/färg – får inte lovas borttagning
+  const asksUncoverable = /rost|olj(a|efläck)|bensin|målarfärg|sprayfärg|lackrester|limrester/i.test(u);
+  const claimsCanRemove = /(tar?\s*bort|avlägsna|rengör|fixar?)\s*(det|fläcken|rostfläcken)/i.test(r)
+    && !/kan\s*inte|svårt|specialbehandling|utanför\s*ramen/i.test(r);
 
-  if (asksAboutUncoverable && claimsCanRemove) {
+  if (asksUncoverable && claimsCanRemove) {
     return {
       blocked: true,
-      safe: `Tyvärr är den typen av fläck (rost, olja, färgspill m.m.) inte något vi kan garantera att vi tar bort – det kräver specialbehandling utanför vår standardtjänst. Vår stentvätt är optimerad för organiska beläggningar som mossa, alger och smuts. Vill du ändå boka ett kostnadsfritt hembesök så kan vi titta och ge råd om vad som kan göras?`,
+      safe: `Den typen av fläck (rost, olja, färgspill m.m.) omfattas tyvärr inte av vår standardtjänst – det kräver specialbehandling. Vår stentvätt är optimerad för organiska beläggningar som mossa, alger och smuts. Vill du ändå att vi tittar på det vid ett kostnadsfritt hembesök?`,
+    };
+  }
+
+  // Boten hänvisar till e-post/telefon istället för formuläret
+  const refersToEmail = /kontakt@htytrengoring|skicka\s*(ett\s*)?mejl|maila\s*oss|ring\s*oss/i.test(r);
+  if (refersToEmail) {
+    return {
+      blocked: true,
+      safe: reply
+        .replace(/skicka\s*(ett\s*)?mejl[^.!?]*/gi, "fyll i formuläret nedan")
+        .replace(/maila\s*oss[^.!?]*/gi, "fyll i formuläret nedan")
+        .replace(/ring\s*oss[^.!?]*/gi, "fyll i formuläret nedan")
+        .replace(/kontakt@htytrengoring\.se/gi, "formuläret nedan")
+        + "\n[TRIGGER_LEAD_FORM]",
     };
   }
 
@@ -208,7 +231,7 @@ function parseResponse(raw) {
 
   const btnMatch = text.match(/\[BUTTONS:\s*([^\]]+)\]/i);
   if (btnMatch) {
-    buttons = btnMatch[1].split("|").map((b) => b.trim()).filter(Boolean);
+    buttons = btnMatch[1].split("|").map(b => b.trim()).filter(Boolean);
     text = text.replace(btnMatch[0], "").trim();
   }
 
@@ -244,7 +267,7 @@ export default async function handler(req, res) {
     /* ── OpenAI ──────────────────────────────────────────────────────── */
     const messages = [
       { role: "system", content: SYSTEM_PROMPT },
-      ...history.slice(-10).map((m) => ({
+      ...history.slice(-10).map(m => ({
         role:    m.role === "user" ? "user" : "assistant",
         content: String(m.content ?? ""),
       })),
@@ -254,47 +277,46 @@ export default async function handler(req, res) {
     const completion = await openai.chat.completions.create({
       model:       "gpt-4o-mini",
       messages,
-      temperature: 0.45,   // lägre = mer konsekvent, färre hallucinations
+      temperature: 0.35,   // lågt = mer konsekvent, följer instruktioner bättre
       max_tokens:  420,
     });
 
     const raw = completion.choices[0]?.message?.content || "";
-    const { text: rawReply, buttons, triggerLeadForm: aiTrigger } = parseResponse(raw);
 
-    /* ── Anti-hallucination ──────────────────────────────────────────── */
-    const guard = hallucGuard(rawReply, text.trim());
-    const reply = guard.blocked ? guard.safe : rawReply;
-    if (guard.blocked) {
-      console.warn("[HALLU_BLOCK] Replaced unsafe reply for session:", sid);
-    }
+    /* ── Anti-hallucination (körs före parseResponse) ────────────────── */
+    const guard = hallucGuard(raw, text.trim());
+    const safeRaw = guard.safe;
+    if (guard.blocked) console.warn("[HALLU_BLOCK] session:", sid);
 
-    /* ── Intent-trigger ──────────────────────────────────────────────── */
-    const allMessages = [
+    const { text: reply, buttons, triggerLeadForm: aiTrigger } = parseResponse(safeRaw);
+
+    /* ── Backend intent-detection (säkerhetsnät) ─────────────────────── */
+    const allMessagesForDetection = [
       ...history,
       { role: "user",      content: text  },
       { role: "assistant", content: reply },
     ];
-    const intentTrigger   = detectLeadIntent(allMessages);
+    const intentTrigger   = detectLeadIntent(allMessagesForDetection, text.trim());
     const triggerLeadForm = aiTrigger || intentTrigger;
 
     /* ── Spara i Supabase ────────────────────────────────────────────── */
     try {
       await supabase.from("messages").insert([
         {
-          session_id:   sid,
-          role:         "user",
-          content:      text.trim(),
-          page_url:     pageUrl   || null,
-          user_agent:   userAgent || null,
-          hallu_block:  false,
-          created_at:   now,
+          session_id:  sid,
+          role:        "user",
+          content:     text.trim(),
+          page_url:    pageUrl   || null,
+          user_agent:  userAgent || null,
+          hallu_block: false,
+          created_at:  now,
         },
         {
-          session_id:   sid,
-          role:         "assistant",
-          content:      reply,
-          hallu_block:  guard.blocked,
-          created_at:   now,
+          session_id:  sid,
+          role:        "assistant",
+          content:     reply,
+          hallu_block: guard.blocked,
+          created_at:  now,
         },
       ]);
 
@@ -314,12 +336,13 @@ export default async function handler(req, res) {
       triggerLeadForm:  triggerLeadForm || false,
       sessionId:        sid,
     });
+
   } catch (err) {
     console.error("Chat error:", err);
     return res.status(500).json({
-      reply:          "Något gick fel just nu. Prova igen om ett ögonblick eller kontakta oss direkt.",
-      buttons:         null,
-      triggerLeadForm: false,
+      reply:           "Något gick fel just nu. Prova igen om ett ögonblick eller kontakta oss direkt.",
+      buttons:          null,
+      triggerLeadForm:  false,
     });
   }
 }
