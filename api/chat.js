@@ -29,17 +29,21 @@ function setCors(req, res) {
 /* ══════════════════════════════════════════════════════════════════════
    SYSTEM PROMPT
 ══════════════════════════════════════════════════════════════════════ */
-
 const SYSTEM_PROMPT = `
 Du är HT Ytrengörings AI-assistent. Du hjälper kunder med ärliga, faktakorrekta svar om stentvätt, altantvätt, asfaltstvätt och impregnering. Du är varm, naturlig och professionell – inte säljig. Svara alltid på ett sätt som känns äkta och hjälpsamt.
 
 ## KUNSKAPSKÄLLA – VIKTIGAST
-Basera dina svar på information från htytrengoring.se. Sidan innehåller detaljerad information om:
-- Stentvätt: htytrengoring.se/stentvatt
-- Asfaltstvätt: htytrengoring.se/asfaltstvatt
-- Vanliga frågor: htytrengoring.se/vanliga-fragor
-- Kontakt: htytrengoring.se/kontakt
-Hänvisa kunden dit för mer detaljer när det är relevant. Hitta inte på information – om du är osäker, hänvisa till hemsidan eller hembesök.
+Basera dina svar på information från htytrengoring.se. Hitta inte på information – om du är osäker, hänvisa till hemsidan eller hembesök.
+
+När du hänvisar kunden till en sida på hemsidan, använd ALLTID detta exakta format – skriv ALDRIG nakna URLs i svarstexten:
+[LINK: Läs mer om stentvätt | https://htytrengoring.se/stentvatt]
+[LINK: Läs mer om altantvätt | https://htytrengoring.se/altantvatt]
+[LINK: Läs mer om asfaltstvätt | https://htytrengoring.se/asfaltstvatt]
+[LINK: Läs mer om årligt underhåll | https://htytrengoring.se/brf-1]
+[LINK: Vanliga frågor | https://htytrengoring.se/vanliga-fragor]
+[LINK: Kontakta oss | https://htytrengoring.se/kontakt]
+
+Lägg alltid [LINK:...]-taggen på en egen rad efter svarstexten. Använd bara den länk som är relevant för frågan – lägg inte till flera i onödan.
 
 ## SVARSLÄNGD – KRITISKT
 Anpassa alltid längden på svaret efter frågans karaktär:
@@ -60,13 +64,17 @@ Anpassa alltid längden på svaret efter frågans karaktär:
 2. Altantvätt – trä- och kompositaltaner
 3. Asfaltstvätt – rengöring av asfalterade ytor (ej försegling)
 4. Impregnering – skyddar mot smuts, fukt och ny påväxt efter tvätt
-5. Fogsand (tillval) – ogräshämmande fogsand återfylls i fogarna
-6. Algbehandling / desinficering – används vid djupare påväxt, t.ex. svart lav, skyddar upp till 12 månader
-7. Årligt underhåll – prenumeration för löpande behandling
+5. Fogsand (tillval) – ogräshämmande fogsand återfylls i fogarna efter tvätt
+6. Algbehandling / desinficering – biocidbehandling vid djupare påväxt, t.ex. svart lav, ger skydd i upp till 12 månader
+7. Årligt underhåll – en enkel uppföljningsbehandling till en bråkdel av priset för en stor stentvätt.
+   KRAV: Kunden måste först ha fått en fullständig stentvätt + impregnering utförd av oss.
+   Innehåller: Biocidbehandling varje vår som appliceras med skum över hela ytan – motverkar alger, smuts och påväxt i upp till 12 månader.
+   Komplett paket (tillval): Ingår även påfyllning av ogräshämmande fogsand där det behövs.
+   OBS: Det är INTE en prenumeration på stentvätt – det är en lätt förebyggande behandling som bevarar resultatet från den stora insatsen och förlänger effekten år efter år.
 
 ## VAD VI TAR BORT ✓
 - Mossa, stenpest, gröna alger, organisk smuts, ogräs i fogar
-- Svart lav: ingen garanti, men biocidbehandling bryter ner den över 6–8 månader
+- Svart lav: ingen garanti, men biocidbehandling bryter ner den successivt – syns normalt efter 6–8 månader
 
 ## VAD VI INTE TAR BORT ✗
 Påstå ALDRIG att vi tar bort dessa:
@@ -74,8 +82,8 @@ Påstå ALDRIG att vi tar bort dessa:
 - Målarfärg, sprayfärg, färgspill
 - Bensin, olja, petroleumprodukter
 - Förseglingar, limrester
-- Däckspår: kräver separat kemisk behandling
-- Natursten: kan rengöras men ingen garanti mot ny smutsinträngning
+- Däckspår – kräver separat kemisk behandling
+- Natursten – kan rengöras men ingen garanti mot ny smutsinträngning
 
 ## PRISER – ABSOLUT FÖRBUD
 Ange ALDRIG priser, prisestimat eller kr/m². Priset beror på: yta & storlek, grad av påväxt, tillval, tillgänglighet och ytans utformning. Förklara kortfattat att pris kräver platsbesök/mätning.
@@ -101,7 +109,7 @@ Visa [TRIGGER_LEAD_FORM] BARA när kunden tydligt och konkret uttrycker att de v
 
 ### TRIGGA INTE formuläret vid:
 - Generella frågor om tjänster, priser, process eller metoder
-- Kunden beskriver sin yta utan att fråga om bokning
+- Kunden beskriver sin yta utan att explicit fråga om bokning
 - Kunden frågar vad ni gör eller inte gör
 - Kunden jämför eller funderar – invänta ett tydligare signal
 
@@ -113,16 +121,17 @@ Sedan [TRIGGER_LEAD_FORM] på sista raden.
 1. Nämn ALDRIG asfaltsförsegling eller asfaltssealing – vi erbjuder asfaltstvätt
 2. Säg ALDRIG "skicka ett mejl" eller "ring oss" – hänvisa till formuläret eller hemsidan
 3. Fråga ALDRIG "vill du att jag skickar formuläret?" – visa det bara när signalen är tydlig
-4. Skriv ALDRIG priser
+4. Skriv ALDRIG priser eller prisestimat
 5. Hitta ALDRIG på fakta – hänvisa till hemsidan eller hembesök vid osäkerhet
 6. Var ALDRIG onödigt säljig eller påträngande
+7. Skriv ALDRIG en URL som ren text – använd alltid [LINK:...]-formatet
 
 ## SNABBSVARSKNAPPAR
 Lägg till [BUTTONS: text1 | text2 | text3] för enkla val när det passar naturligt.
 
 ## ÖVRIGA REGLER
 - Svara alltid på svenska
-- Vid teknisk osäkerhet → hänvisa till hembesök eller htytrengoring.se/vanliga-fragor
+- Vid teknisk osäkerhet → hänvisa till hembesök eller vanliga-fragor-sidan
 - Du representerar HT Ytrengöring – var hjälpsam, ärlig och professionell
 `.trim();
 
@@ -132,8 +141,8 @@ Lägg till [BUTTONS: text1 | text2 | text3] för enkla val när det passar natur
    Körs på backend som extra säkerhetsnät utöver AI:ns egen [TRIGGER_LEAD_FORM]
 ══════════════════════════════════════════════════════════════════════ */
 function detectLeadIntent(history, currentUserText) {
-  const userText   = currentUserText.toLowerCase().trim();
-  const allRecent  = history.slice(-6).map(m => m.content.toLowerCase()).join(" ");
+  const userText  = currentUserText.toLowerCase().trim();
+  const allRecent = history.slice(-6).map(m => m.content.toLowerCase()).join(" ");
   const lastBotMsg = [...history].reverse().find(m => m.role === "assistant")?.content?.toLowerCase() || "";
 
   /* ── 1. Direkta starka signaler i användarens meddelande ────────────── */
@@ -172,13 +181,12 @@ function detectLeadIntent(history, currentUserText) {
   ].some(r => r.test(userText + " " + allRecent));
 
   const serviceMentioned = [
-    "stentvätt", "impregnering", "asfalts", "försegling",
-    "tvätt", "mossa", "alger", "lav",
+    "stentvätt", "impregnering", "asfalts", "tvätt", "mossa", "alger", "lav",
   ].some(s => allRecent.includes(s));
 
   if (describesSurface && serviceMentioned) return true;
 
-  /* ── 4. Konversationen är 4+ meddelanden och tjänst har diskuterats ──── */
+  /* ── 4. Prisintresse efter 4+ meddelanden om en tjänst ──────────────── */
   if (history.length >= 4 && serviceMentioned) {
     const priceFocus = ["kostar", "pris", "kostnad", "hur mycket", "vad tar ni"].some(s => userText.includes(s));
     if (priceFocus) return true;
@@ -186,6 +194,7 @@ function detectLeadIntent(history, currentUserText) {
 
   return false;
 }
+
 
 /* ── ANTI-HALLUCINATION GUARD ────────────────────────────────────────── */
 function hallucGuard(reply, userText) {
@@ -200,7 +209,7 @@ function hallucGuard(reply, userText) {
   if (askingBlackLav && claimsDirectRemoval) {
     return {
       blocked: true,
-      safe: `De svarta prickarna är troligen svart lav – en seglivad beläggning som sätter sig i stenens porer. Vanlig stentvätt tar inte bort den direkt. Vi erbjuder algbehandling med biocid som bryter ner svart lav successivt – men resultatet syns normalt efter 6–8 månader och vi lämnar ingen garanti.\n\nFyll i formuläret nedan så kommer vi ut och bedömer din yta kostnadsfritt! 😊 [TRIGGER_LEAD_FORM]`,
+      safe: `De svarta prickarna är troligen svart lav – en seglivad beläggning som sätter sig i stenens porer. Vanlig stentvätt tar inte bort den direkt. Vi erbjuder algbehandling med biocid som bryter ner svart lav successivt – men resultatet syns normalt efter 6–8 månader och vi lämnar ingen garanti.\n\nFyll i formuläret nedan så kommer vi ut och bedömer din yta kostnadsfritt! 😊\n[TRIGGER_LEAD_FORM]`,
     };
   }
 
@@ -233,25 +242,45 @@ function hallucGuard(reply, userText) {
   return { blocked: false, safe: reply };
 }
 
+
 /* ── PARSE AI RESPONSE ───────────────────────────────────────────────── */
 function parseResponse(raw) {
   let text = raw.trim();
   let buttons = null;
+  let linkButtons = null;
   let triggerLeadForm = false;
 
+  // Befintlig BUTTONS-parsing
   const btnMatch = text.match(/\[BUTTONS:\s*([^\]]+)\]/i);
   if (btnMatch) {
     buttons = btnMatch[1].split("|").map(b => b.trim()).filter(Boolean);
     text = text.replace(btnMatch[0], "").trim();
   }
 
+  // LINK_BUTTON-parsing – matchar [LINK: Text | https://...]
+  const linkRegex = /\[LINK:\s*([^\|]+)\|\s*(https?:\/\/[^\]]+)\]/gi;
+  const links = [];
+  let linkMatch;
+  while ((linkMatch = linkRegex.exec(text)) !== null) {
+    links.push({
+      text: linkMatch[1].trim(),
+      url:  linkMatch[2].trim(),
+    });
+  }
+  if (links.length > 0) {
+    linkButtons = links;
+    text = text.replace(/\[LINK:[^\]]+\]/gi, "").trim();
+  }
+
+  // TRIGGER_LEAD_FORM-parsing
   if (text.includes("[TRIGGER_LEAD_FORM]")) {
     triggerLeadForm = true;
     text = text.replace(/\[TRIGGER_LEAD_FORM\]/gi, "").trim();
   }
 
-  return { text, buttons, triggerLeadForm };
+  return { text, buttons, linkButtons, triggerLeadForm };
 }
+
 
 /* ── MAIN HANDLER ────────────────────────────────────────────────────── */
 export default async function handler(req, res) {
@@ -287,7 +316,7 @@ export default async function handler(req, res) {
     const completion = await openai.chat.completions.create({
       model:       "gpt-4o-mini",
       messages,
-      temperature: 0.35,   // lågt = mer konsekvent, följer instruktioner bättre
+      temperature: 0.35,
       max_tokens:  420,
     });
 
@@ -298,7 +327,12 @@ export default async function handler(req, res) {
     const safeRaw = guard.safe;
     if (guard.blocked) console.warn("[HALLU_BLOCK] session:", sid);
 
-    const { text: reply, buttons, triggerLeadForm: aiTrigger } = parseResponse(safeRaw);
+    const {
+      text:            reply,
+      buttons,
+      linkButtons,
+      triggerLeadForm: aiTrigger,
+    } = parseResponse(safeRaw);
 
     /* ── Backend intent-detection (säkerhetsnät) ─────────────────────── */
     const allMessagesForDetection = [
@@ -342,17 +376,19 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       reply,
-      buttons:          buttons        || null,
-      triggerLeadForm:  triggerLeadForm || false,
-      sessionId:        sid,
+      buttons:         buttons         || null,
+      linkButtons:     linkButtons     || null,
+      triggerLeadForm: triggerLeadForm || false,
+      sessionId:       sid,
     });
 
   } catch (err) {
     console.error("Chat error:", err);
     return res.status(500).json({
-      reply:           "Något gick fel just nu. Prova igen om ett ögonblick eller kontakta oss direkt.",
-      buttons:          null,
-      triggerLeadForm:  false,
+      reply:           "Något gick fel just nu. Prova igen om ett ögonblick.",
+      buttons:         null,
+      linkButtons:     null,
+      triggerLeadForm: false,
     });
   }
 }
