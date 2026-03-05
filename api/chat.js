@@ -345,7 +345,7 @@ export default async function handler(req, res) {
 
     /* ── Spara i Supabase ────────────────────────────────────────────── */
     try {
-      await supabase.from("messages").insert([
+      await supabase.from("chat_messages").insert([  // ✅ ÄNDRAT från "messages"
         {
           session_id:  sid,
           role:        "user",
@@ -364,7 +364,7 @@ export default async function handler(req, res) {
         },
       ]);
 
-      await supabase.from("sessions").upsert({
+      await supabase.from("chat_sessions").upsert({  // ✅ ÄNDRAT från "sessions"
         id:            sid,
         last_seen:     now,
         page_url:      pageUrl || null,
