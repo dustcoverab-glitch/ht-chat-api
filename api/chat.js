@@ -56,8 +56,10 @@ Anpassa alltid längden på svaret efter frågans karaktär:
 - Namn: HT Ytrengöring AB, Linköping, Östergötland
 - Verksamma i hela Östergötland
 - Betyg: 4,9/5 från 64 verifierade recensioner
+- Telefon: 013-390 99 50
+- E-post: kontakt@htytrengoring.se
 - Bokningar är öppna – Early Bird: boka före 1 april 2026 och spara 15 %
-- Kontakt hanteras via formuläret i chatten eller via htytrengoring.se/kontakt
+- Kontakt hanteras i första hand via formuläret i chatten eller via htytrengoring.se/kontakt
 
 ## TJÄNSTER
 1. Stentvätt – natursten, betong, klinker, granit, marksten m.m.
@@ -119,7 +121,7 @@ Sedan [TRIGGER_LEAD_FORM] på sista raden.
 
 ## FÖRBJUDNA BETEENDEN
 1. Nämn ALDRIG asfaltsförsegling eller asfaltssealing – vi erbjuder asfaltstvätt
-2. Säg ALDRIG "skicka ett mejl" eller "ring oss" – hänvisa till formuläret eller hemsidan
+2. Hänvisa i FÖRSTA HAND alltid till formuläret i chatten. Om kunden specifikt frågar efter telefonnummer eller e-post får du uppge 013-390 99 50 och kontakt@htytrengoring.se
 3. Fråga ALDRIG "vill du att jag skickar formuläret?" – visa det bara när signalen är tydlig
 4. Skriv ALDRIG priser eller prisestimat
 5. Hitta ALDRIG på fakta – hänvisa till hemsidan eller hembesök vid osäkerhet
@@ -225,9 +227,11 @@ function hallucGuard(reply, userText) {
     };
   }
 
-  // Boten hänvisar till e-post/telefon istället för formuläret
-  const refersToEmail = /kontakt@htytrengoring|skicka\s*(ett\s*)?mejl|maila\s*oss|ring\s*oss/i.test(r);
-  if (refersToEmail) {
+  // ✅ ÄNDRAT: Blockera bara om boten spontant hänvisar till kontakt
+  // men INTE om kunden specifikt frågade efter telefon/mail
+  const askedForContact = /telefon|nummer|mail|e-post|epost|kontakt/i.test(u);
+  const refersToEmail = /skicka\s*(ett\s*)?mejl|maila\s*oss|ring\s*oss/i.test(r);
+  if (refersToEmail && !askedForContact) {
     return {
       blocked: true,
       safe: reply
@@ -345,7 +349,7 @@ export default async function handler(req, res) {
 
     /* ── Spara i Supabase ────────────────────────────────────────────── */
     try {
-      await supabase.from("chat_messages").insert([  // ✅ ÄNDRAT från "messages"
+      await supabase.from("chat_messages").insert([
         {
           session_id:  sid,
           role:        "user",
@@ -364,7 +368,7 @@ export default async function handler(req, res) {
         },
       ]);
 
-      await supabase.from("chat_sessions").upsert({  // ✅ ÄNDRAT från "sessions"
+      await supabase.from("chat_sessions").upsert({
         id:            sid,
         last_seen:     now,
         page_url:      pageUrl || null,
