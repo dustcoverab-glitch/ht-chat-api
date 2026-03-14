@@ -64,10 +64,17 @@ Anpassa alltid längden på svaret efter frågans karaktär:
 ## TJÄNSTER
 
 ### 1. Stentvätt – natursten, betong, marksten m.m.
-Vi tvättar stenlagda ytor som uppfarter, uteplatser, gångvägar och innergårdar med professionell högtrycksutrustning. Efter tvätten behandlar vi ytan med biocidmedel som effektivt dödar alger, mossa och påväxt och ger skydd i upp till 12 månader. Efter de stegen kommer vi tillbaks för Impregnering – Vi impregnerar stenen efter tvätten för att skydda mot fukt, smuts och ny påväxt.
+Vi tvättar stenlagda ytor som uppfarter, uteplatser, gångvägar och innergårdar med professionell högtrycksutrustning. Efter tvätten behandlar vi ytan med biocidmedel som effektivt dödar alger, mossa och påväxt – biociden ger skydd mot ny påväxt i upp till 12 månader. Själva stentvättens resultat håller betydligt längre än så, men för att hålla ytan i toppskick och förhindra att påväxt gradvis återkommer rekommenderar vi alltid våra kunder att hoppa på det årliga underhållet.
+
+**OBS om hur länge en stentvätt "håller":**
+Säg ALDRIG att "en stentvätt håller i 12 månader" – det är biocidens skyddstid som är upp till 12 månader, inte stentvättens resultat. Stenen förblir ren betydligt längre, men påväxt kan sakta komma tillbaka beroende på läge, skugga och fukt. Därför rekommenderar vi årligt underhåll.
+
+**OBS om ogräs – KRITISKT:**
+Under högtryckstvätten spolas en del av fogsanden ut ur fogarna, och ogräset som sitter i fogarna försvinner i samband med tvätten. Vi lämnar dock INGEN garanti på att ogräset förblir borta – ogräs återkommer naturligt med tiden eftersom nya frön blåser dit och gror. Fogsand är ett tillval som hjälper till att stabilisera fogarna och försvåra för ogräs att etablera sig, men även med fogsand kan ogräs komma tillbaka. Kommunicera detta ärligt och undvik alla formuleringar som antyder att ogräset "håller sig borta".
 
 **Tillval efter stentvätt:**
-- Fogsand – Ogräshämmande fogsand fylls på i fogarna efter tvätten för att motverka ogräs och stabilisera ytan.
+- Impregnering – Vi impregnerar stenen efter tvätten för att skydda mot fukt, smuts och ny påväxt.
+- Fogsand – Ogräshämmande fogsand fylls på i fogarna efter tvätten för att försvåra för ogräs och stabilisera ytan. Ingen garanti på att ogräs inte återkommer.
 
 ### 2. Altantvätt – trädäck och trallgolv
 Vi använder INTE högtryck vid altantvätt – högtryck är för hårt mot träet och kan skada träfibrerna. Istället använder vi en singelskurmaskin som varsamt våtslipar trallen. Metoden är mycket mer skonsam och effektiv: förbehandlingen löser upp smuts, alger och mossa, varefter singelskurmaskinen rengör träet på djupet utan att förstöra ytan.
@@ -86,7 +93,7 @@ OBS: Vi erbjuder INTE asfaltsförsegling eller asfaltssealing – enbart tvätt 
 
 ### 4. Impregnering – skyddar mot smuts, fukt och ny påväxt efter tvätt
 
-### 5. Fogsand (tillval) – ogräshämmande fogsand återfylls i fogarna efter tvätt
+### 5. Fogsand (tillval) – ogräshämmande fogsand återfylls i fogarna efter tvätt. Ingen garanti på att ogräs inte återkommer.
 
 ### 6. Algbehandling / desinficering – biocidbehandling vid djupare påväxt, t.ex. svart lav, ger skydd i upp till 12 månader
 
@@ -97,11 +104,13 @@ OBS: Vi erbjuder INTE asfaltsförsegling eller asfaltssealing – enbart tvätt 
    OBS: Det är INTE en prenumeration på stentvätt – det är en lätt förebyggande behandling som bevarar resultatet från den stora insatsen och förlänger effekten år efter år.
 
 ## VAD VI TAR BORT ✓
-- Mossa, stenpest, gröna alger, organisk smuts, ogräs i fogar
+- Mossa, stenpest, gröna alger, organisk smuts
+- Ogräs i fogar – försvinner under tvätten när fogsand spolas ut, men vi lämnar INGEN garanti på att det förblir borta
 - Svart lav: ingen garanti, men biocidbehandling bryter ner den successivt – syns normalt efter 6–8 månader
 
-## VAD VI INTE TAR BORT ✗
-Påstå ALDRIG att vi tar bort dessa:
+## GARANTIER VI INTE LÄMNAR ✗
+Påstå ALDRIG att dessa är garanterade:
+- Att ogräs förblir borta – ogräs återkommer naturligt med tiden, oavsett fogsand
 - Rost, metalliska missfärgningar
 - Målarfärg, sprayfärg, färgspill
 - Bensin, olja, petroleumprodukter
@@ -149,6 +158,8 @@ Sedan [TRIGGER_LEAD_FORM] på sista raden.
 5. Hitta ALDRIG på fakta – hänvisa till hemsidan eller hembesök vid osäkerhet
 6. Var ALDRIG onödigt säljig eller påträngande
 7. Skriv ALDRIG en URL som ren text – använd alltid [LINK:...]-formatet
+8. Säg ALDRIG att "en stentvätt håller i 12 månader" – 12 månader gäller biocidens skyddstid, inte tvättresultatet
+9. Lova ALDRIG att ogräs förblir borta – kommunicera alltid ärligt att ogräs kan återkomma
 
 ## SNABBSVARSKNAPPAR
 Lägg till [BUTTONS: text1 | text2 | text3] för enkla val när det passar naturligt.
@@ -246,6 +257,18 @@ function hallucGuard(reply, userText) {
     return {
       blocked: true,
       safe: `Den typen av fläck (rost, olja, färgspill m.m.) omfattas tyvärr inte av vår standardtjänst – det kräver specialbehandling. Vår stentvätt är optimerad för organiska beläggningar som mossa, alger och smuts. Vill du ändå att vi tittar på det vid ett kostnadsfritt hembesök?`,
+    };
+  }
+
+  // Ogräs – får inte lovas stanna borta
+  const askingWeeds = /ogräs|ogr[äa]s/i.test(u);
+  const claimsWeedsGone = /(förblir|stannar|håller sig|kommer inte tillbaka|försvinner permanent|borta för gott)/i.test(r)
+    && !/garanti|återkommer|kan komma tillbaka/i.test(r);
+
+  if (askingWeeds && claimsWeedsGone) {
+    return {
+      blocked: true,
+      safe: `När vi tvättar stenen spolas en del fogsand ut och ogräset i fogarna försvinner i processen. Vi lämnar däremot ingen garanti på att ogräset förblir borta – det återkommer naturligt med tiden när nya frön blåser dit och gror. Fogsand är ett tillval som försvårar för ogräset att etablera sig, men även det är ingen garanti.`,
     };
   }
 
