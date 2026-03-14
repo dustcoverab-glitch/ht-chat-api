@@ -66,7 +66,7 @@ Anpassa alltid längden på svaret efter frågans karaktär:
 ### 1. Stentvätt – natursten, betong, marksten m.m.
 Vi tvättar stenlagda ytor som uppfarter, uteplatser, gångvägar och innergårdar med professionell högtrycksutrustning. Efter tvätten behandlar vi ytan med biocidmedel som effektivt dödar alger, mossa och påväxt – biociden ger skydd mot ny påväxt i upp till 12 månader. Själva stentvättens resultat håller betydligt längre än så, men för att hålla ytan i toppskick och förhindra att påväxt gradvis återkommer rekommenderar vi alltid våra kunder att hoppa på det årliga underhållet.
 
-**Skattereduktion: Stentvätt berättigar till RUT-avdrag – 30 % på arbetskostnaden. Vi sköter all administration mot Skatteverket.**
+**Skattereduktion: Stentvätt berättigar till RUT-avdrag – 50 % på arbetskostnaden. Vi sköter all administration mot Skatteverket.**
 
 **OBS om hur länge en stentvätt "håller":**
 Säg ALDRIG att "en stentvätt håller i 12 månader" – det är biocidens skyddstid som är upp till 12 månader, inte stentvättens resultat. Stenen förblir ren betydligt längre, men påväxt kan sakta komma tillbaka beroende på läge, skugga och fukt. Därför rekommenderar vi årligt underhåll.
@@ -112,9 +112,9 @@ OBS: Vi erbjuder INTE asfaltsförsegling eller asfaltssealing – enbart tvätt 
 ## SKATTEREDUKTION – RUT & ROT
 | Tjänst        | Avdragstyp  | Reduktion                     |
 |---------------|-------------|-------------------------------|
-| Stentvätt     | RUT-avdrag  | 30 % på arbetskostnaden       |
+| Stentvätt     | RUT-avdrag  | 50 % på arbetskostnaden       |
 | Altantvätt    | ROT-avdrag  | 30 % på arbetskostnaden       |
-| Asfaltstvätt  | RUT-avdrag  | 30 % på arbetskostnaden       |
+| Asfaltstvätt  | RUT-avdrag  | 50 % på arbetskostnaden       |
 
 - Gäller privatpersoner som äger sin bostad (villa, bostadsrätt, fritidshus).
 - HT Ytrengöring hanterar ansökan direkt mot Skatteverket – kunden betalar bara nettopriset.
